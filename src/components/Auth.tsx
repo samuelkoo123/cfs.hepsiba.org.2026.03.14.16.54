@@ -46,14 +46,13 @@ export default function Auth({ onLogin, onAdminAccess }: AuthProps) {
         const dummyToken = `firebase_${churchData.id}`;
         onLogin(dummyToken, churchData);
       } else {
-        const res = await fetch("/api/admin/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ password: adminPassword }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "관리자 비밀번호가 틀립니다.");
-        onAdminAccess();
+        // Perform client-side check to support static hosting environments
+        const ADMIN_PASSWORD = "hepsiba1234";
+        if (adminPassword && adminPassword.trim() === ADMIN_PASSWORD) {
+          onAdminAccess();
+        } else {
+          throw new Error("관리자 비밀번호가 틀립니다.");
+        }
       }
     } catch (err: any) {
       setError(err.message);
